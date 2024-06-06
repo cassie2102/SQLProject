@@ -1,5 +1,4 @@
 -- Select the names and most recent salaries of all current employees
--- Note that the query may take a long time to run if you remove the LIMIT statement
 SELECT
 	first_name,
 	last_name,
