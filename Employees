@@ -1,0 +1,18 @@
+-- Select the names and most recent salaries of all current employees
+-- Note that the query may take a long time to run if you remove the LIMIT statement
+SELECT
+	first_name,
+	last_name,
+	hire_date,
+	salary
+FROM employees
+	INNER JOIN salaries USING(emp_no)
+WHERE
+	to_date = (
+		SELECT
+			MAX(to_date)
+		FROM
+			salaries
+	)
+ORDER BY emp_no
+LIMIT 5
