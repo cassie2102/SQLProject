@@ -1,0 +1,73 @@
+---1.How many unique nodes are on the Data Bank System?
+///ANSWER= 5
+
+///SELECT 
+//COUNT(DISTINCT NODE_ID) as unique_id
+//FROM customer_nodes
+
+---2.What is the number of nodes per region?
+/// ANSWER= 5
+
+//SELECT 
+//region_name,
+//COUNT(DISTINCT node_id) as nodes
+//FROM customer_nodes as C
+//INNER JOIN regions as R on C.region_id=R.region_id
+//GROUP BY REGION_NAME;
+
+---3. How many customers are allocated to each region?
+/*Australia	110
+America	105
+Africa	102
+Asia	95
+Europe	88
+
+SELECT
+region_name,
+COUNT(DISTINCT customer_id) as customers
+FROM customer_nodes as C
+INNER JOIN regions as R on C.region_id=R.region_id
+GROUP BY REGION_NAME
+ORDER BY customers DESC;
+*/
+
+/*---4. How many days on average are customers reallocated to a different node?
+ANSWER= 24 days
+*/
+/*WITH DAYS_IN_NODE AS (
+SELECT
+customer_id,
+node_id,
+SUM(DATEDIFF('days', start_date,end_date)) as days_in_node
+FROM customer_nodes
+WHERE end_date <> '9999-12-31'
+GROUP BY customer_id,
+node_id
+)
+SELECT 
+ROUND(AVG(days_in_node),0) as average_days_in_nodes
+FROM DAYS_IN_NODE */
+
+--- 5. What is the median, 80th and 95th percentile for this same rellocation days metric for each region?
+/*WITH DAYS_IN_NODE AS (
+SELECT
+region_name,
+customer_id,
+node_id,
+SUM(DATEDIFF('days', start_date,end_date)) as days_in_node
+FROM customer_nodes as C
+INNER JOIN regions as R on R.region_id= C.region_id
+WHERE end_date <> '9999-12-31'
+GROUP BY region_name,
+customer_id,
+node_id
+)
+SELECT 
+region_name,
+ROUND(AVG(days_in_node),0) as average_days_in_node,
+ROUND(MEDIAN(days_in_node),0) as median_days_in_node,
+PERCENTILE_CONT(0.80) WITHIN GROUP ( ORDER BY days_in_node) as pc_80_days_in_node,
+PERCENTILE_CONT(0.95) WITHIN GROUP ( ORDER BY days_in_node) as pc_95_days_in_node,
+FROM DAYS_IN_NODE
+GROUP BY region_name;
+/*
